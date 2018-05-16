@@ -9,30 +9,27 @@ import {
   Text,
   View
 } from 'react-native';
+import {
+  LoginManager,
+  AccessToken
+} from 'react-native-fbsdk'
 import Login from './Login';
-import FB from 'react-native-fbsdk'
 
 /* ::
   type Props = {};
 */
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 export default class LoginContainer extends Component/* :: <Props> */ {
 
   login = async () => {
-    const result = await FB.LoginManager.logInWithReadPermissions([
+    const { isCancelled } = await LoginManager.logInWithReadPermissions([
       'public_profile',
       'user_friends'
-    ]).then((result) => {
-      console.warn(result)
-    })
-    console.warn(result)
+    ])
+    if (!isCancelled) {
+      const token = await AccessToken.getCurrentAccessToken()
+      console.warn(token.accessToken.toString())
+    }
   }
 
   render() {

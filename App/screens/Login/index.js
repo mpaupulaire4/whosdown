@@ -10,7 +10,7 @@ import {
   View
 } from 'react-native';
 import Login from './Login';
-// import FB from 'react-native-fbsdk'
+import FB from 'react-native-fbsdk'
 
 /* ::
   type Props = {};
@@ -26,13 +26,13 @@ const instructions = Platform.select({
 export default class LoginContainer extends Component/* :: <Props> */ {
 
   login = async () => {
-    // const result = await FB.LoginManager.logInWithReadPermissions([
-    //   'public_profile',
-    //   'user_friends'
-    // ]).then((result) => {
-    //   console.warn(result)
-    // })
-    // console.warn(result)
+    const result = await FB.LoginManager.logInWithReadPermissions([
+      'public_profile',
+      'user_friends'
+    ]).then((result) => {
+      console.warn(result)
+    })
+    console.warn(result)
   }
 
   render() {

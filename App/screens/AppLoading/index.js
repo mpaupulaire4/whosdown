@@ -3,12 +3,6 @@
  */
 
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
 import { graphql, QueryRenderer } from 'react-relay';
 import PropTypes from 'prop-types';
 import Gradient from '../../components/Gradient';
@@ -46,7 +40,6 @@ export default class AppLoading extends Component/* :: <Props> */ {
             setTimeout(() => {
               this.props.navigation.navigate('AppMain');
             }, 10);
-
           }
           return (<Gradient style={{flex: 1}}/>);
         }}

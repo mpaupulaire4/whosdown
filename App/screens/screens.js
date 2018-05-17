@@ -6,10 +6,10 @@ import {
 import React from 'react'
 import AppLoading from './AppLoading'
 import Login from './Login'
+import Profile from './Profile'
 // import Create from './Create'
 // import Community from './Community'
 // import Squad from './Squad'
-// import Profile from './Profile'
 // import MyEvents from './MyEvents'
 // import EventDetails from './EventDetails'
 // import TabBar from '../components/TabBar'
@@ -67,9 +67,13 @@ const AppMain = createBottomTabNavigator({
   //     }
   //   })
   // },
-  // Profile: {
-  //   screen: Profile,
-  // },
+  Profile,
+}, {
+  tabBarPosition: 'bottom',
+  lazy: true,
+  swipeEnabled: true,
+  animationEnabled: true,
+  removeClippedSubviews: true,
 })
 export const RootRouteConfig = {
   Login,

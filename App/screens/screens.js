@@ -1,8 +1,10 @@
 import {
   createStackNavigator,
-  createSwitchNavigator
-}   from 'react-navigation';
+  createSwitchNavigator,
+  createBottomTabNavigator,
+} from 'react-navigation';
 import React from 'react'
+import AppLoading from './AppLoading'
 import Login from './Login'
 // import Create from './Create'
 // import Community from './Community'
@@ -44,8 +46,8 @@ import Login from './Login'
 //   },
 // }
 
-export const RootRouteConfig = {
-  Login,
+const AppMain = createBottomTabNavigator({
+  MyEvents: () => null,
   // MyEvents: {
   //   screen: createStackNavigator(MyEventsRouteConfig, {
   //     initialRouteName: 'MyEvents',
@@ -68,12 +70,17 @@ export const RootRouteConfig = {
   // Profile: {
   //   screen: Profile,
   // },
+})
+export const RootRouteConfig = {
+  Login,
+  AppLoading,
+  AppMain
 };
 
 
 export default AppNav = createSwitchNavigator(
   RootRouteConfig,
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'AppLoading',
   }
 );

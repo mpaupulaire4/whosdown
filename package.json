@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "relay": "relay-compiler --src ./App --schema ./schema.graphql --extensions js jsx",
     "test": "jest"
   },
   "dependencies": {
@@ -14,14 +15,18 @@
     "react-native-fbsdk": "^0.7.0",
     "react-native-linear-gradient": "^2.4.0",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "^2.0.1"
+    "react-navigation": "^2.0.1",
+    "react-relay": "^1.6.0"
   },
   "devDependencies": {
     "babel-jest": "22.4.3",
+    "babel-plugin-relay": "^1.6.0",
     "babel-preset-react-native": "4.0.0",
+    "graphql": "^0.13.2",
     "jest": "22.4.3",
     "prop-types": "^15.6.1",
-    "react-test-renderer": "16.3.1"
+    "react-test-renderer": "16.3.1",
+    "relay-compiler": "^1.6.0"
   },
   "jest": {
     "preset": "react-native"

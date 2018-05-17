@@ -1,25 +1,25 @@
-/**
- * @flow
- */
+// @flow
 
 import React, { Component, Pure } from 'react';
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
+  AsyncStorage,
 } from 'react-native';
 import {
   LoginManager,
   AccessToken
 } from 'react-native-fbsdk'
+import PropTypes from 'prop-types';
 import Login from './Login';
+import { WHOSDOWN_TOKEN_KEY } from '../../Data/constants'
 
-/* ::
-  type Props = {};
-*/
 
-export default class LoginContainer extends Component/* :: <Props> */ {
+export default class LoginContainer extends Component {
+
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired,
+    }).isRequired,
+  }
 
   login = async () => {
     const { isCancelled } = await LoginManager.logInWithReadPermissions([
@@ -28,6 +28,7 @@ export default class LoginContainer extends Component/* :: <Props> */ {
     ])
     if (!isCancelled) {
       const token = await AccessToken.getCurrentAccessToken()
+      await AsyncStorage.setItem(WHOSDOWN_TOKEN_KEY, token.accessToken.toString())
       console.warn(token.accessToken.toString())
     }
   }
@@ -38,23 +39,4 @@ export default class LoginContainer extends Component/* :: <Props> */ {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
 

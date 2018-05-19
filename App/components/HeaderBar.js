@@ -6,22 +6,10 @@ import {
   TouchableOpacity,
   Platform
 } from 'react-native'
-import {connect} from 'react-redux'
-import {back} from '../actions/nav-actions'
 import { silver, background } from '../styles/colors'
-import { Icon, Constants } from 'expo'
-const { Ionicons } = Icon
-function mapStateToProps(state, ownProps){
-  return {
+import Icon from 'react-native-vector-icons/Ionicons';
 
-  }
-}
-function mapDispatchToProps(dispatch, ownProps){
-  return {
-    navBack: ()=>dispatch(back())
-  }
-}
-const MARGIN = Constants.statusBarHeight;
+const MARGIN = 20;
 const styles = StyleSheet.create({
   titleText: {
     color: background,
@@ -51,12 +39,12 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0
   }
-})
-export function HeaderBar({navBack, title, margin = true, right}) {
+});
+export default function HeaderBar({navBack, title, margin = true, right}) {
   return (
     <View style={[styles.headerContainer, !margin ? {paddingTop: 0, height: 50} : {}]} >
       <TouchableOpacity style={styles.buttonContainer} onPress={navBack}>
-        <Ionicons name='ios-arrow-back' size={35} color={background} style={styles.icon}/>
+        <Icon name='ios-arrow-back' size={35} color={background} style={styles.icon}/>
       </TouchableOpacity>
       <Text style={styles.titleText}>{title}</Text>
       <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
@@ -65,5 +53,3 @@ export function HeaderBar({navBack, title, margin = true, right}) {
     </View>
   )
 }
-
-export default connect(mapStateToProps,mapDispatchToProps)(HeaderBar)

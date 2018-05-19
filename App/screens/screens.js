@@ -7,6 +7,7 @@ import React from 'react'
 import AppLoading from './AppLoading'
 import Login from './Login'
 import Profile from './Profile'
+import MyEvents from './MyEvents'
 // import Create from './Create'
 // import Community from './Community'
 // import Squad from './Squad'
@@ -16,23 +17,26 @@ import Profile from './Profile'
 // import { highlight4, highlight3 } from '../styles/colors';
 // import HeaderBar from '../components/HeaderBar'
 
-// export const MyEventsRouteConfig = {
-//   MyEvents: {
-//     screen: MyEvents,
-//   },
-//   EventDetails: {
-//     screen: EventDetails,
-//     navigationOptions: {
-//       tabBarVisible: false
-//     },
-//   },
-//   EditEvent: {
-//     screen: Create,
-//     navigationOptions: {
-//       tabBarVisible: false
-//     },
-//   }
-// }
+export const MyEventsStack = createStackNavigator({
+  MyEvents,
+  // EventDetails: {
+  //   screen: EventDetails,
+  //   navigationOptions: {
+  //     tabBarVisible: false
+  //   },
+  // },
+  // EditEvent: {
+  //   screen: Create,
+  //   navigationOptions: {
+  //     tabBarVisible: false
+  //   },
+  // }
+}, {
+  initialRouteName: 'MyEvents',
+  navigationOptions: {
+    header: null
+  }
+})
 
 // export const CommunityRouteConfig = {
 //   Community: {
@@ -47,18 +51,12 @@ import Profile from './Profile'
 // }
 
 const AppMain = createBottomTabNavigator({
-  MyEvents: () => null,
-  // MyEvents: {
-  //   screen: createStackNavigator(MyEventsRouteConfig, {
-  //     initialRouteName: 'MyEvents',
-  //     navigationOptions: {
-  //       header: null
-  //     }
-  //   }),
-  //   navigationOptions: {
-  //     title: 'My Events',
-  //   },
-  // },
+  MyEvents: {
+    screen: MyEventsStack,
+    navigationOptions: {
+      title: 'My Events',
+    },
+  },
   // Community: {
   //   screen: createStackNavigator(CommunityRouteConfig, {
   //     initialRouteName: 'Community',

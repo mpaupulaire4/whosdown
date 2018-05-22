@@ -27,34 +27,29 @@ const styles = {
   }
 }
 const TABS = ['HOSTING', 'PARTICIPATING'];
-const EventProptype = {
-  id: PropTypes.string,
-}
+const EventPropType = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+})
 export default class MyEvents extends Component {
   static propTypes = {
     hostedEvents: PropTypes.arrayOf(
-      PropTypes.shape(EventProptype)
+      EventPropType
     ).isRequired,
     participatingEvents: PropTypes.arrayOf(
-      PropTypes.shape(EventProptype)
-    ).isRequired
+      EventPropType
+    ).isRequired,
+    onEventPress: PropTypes.func.isRequired,
   }
 
   state = {
     selected: TABS[0],
   }
 
-  // componentWillMount() {
-  //   EventsService.getUserHostedEvents().then((hostedEvents) => {
-  //     this.setState({ hostedEvents })
-  //   })
-  // }
-  handlePress = (event) => {
-    const { navigate } = this.props.navigation
-    // EventsService.getEventById(event.id).then((newEvent) => {
-    //   navigate('EventDetails', { event: newEvent })
-    // })
+  eventPressed = (event) => {
+    const { onEventPress } = this.props
+    onEventPress(event);
   }
+
   handleToggle = (option) => {
     this.setState({
       selected: option,
@@ -63,19 +58,27 @@ export default class MyEvents extends Component {
 
   _keyExtractor = (item) => item.id;
 
-  renderCard = (event) => (
+  renderCard = ({ item }) => (
     <CommunityCard
-      event={event}
+      event={item}
+      onPress={this.props.onEventPress}
+      slim={true}
+      locked={true}
     />
   )
 
 
   render() {
-    const {hostedEvents, participatingEvents} = this.props
+    const { hostedEvents, participatingEvents } = this.props
+    const { selected } = this.state
     return (
       <View style={styles.rowContainer}>
         <Gradient style={styles.container}>
-          <BinaryButton onTabChange={this.handleToggle} options={TABS} />
+          <BinaryButton
+            onTabChange={this.handleToggle}
+            options={TABS}
+            selected={selected}
+          />
           <FlatList
             data={this.state.selected === TABS[0] ? hostedEvents : participatingEvents}
             keyExtractor={this._keyExtractor}

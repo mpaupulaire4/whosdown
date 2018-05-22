@@ -30,6 +30,7 @@ export default class LoginContainer extends Component {
       const token = await AccessToken.getCurrentAccessToken()
       await AsyncStorage.setItem(WHOSDOWN_TOKEN_KEY, token.accessToken.toString())
       console.warn(token.accessToken.toString())
+      this.props.navigate('AppMain')
     }
   }
 

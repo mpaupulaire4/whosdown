@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet
 } from 'react-native'
+import PropTypes from 'prop-types'
 
 const styles = StyleSheet.create({
   toggleContainer: {
@@ -33,21 +34,23 @@ const styles = StyleSheet.create({
 })
 
 export default class BinaryButton extends Component {
-  state = {
-    selected: this.props.options[0],
+  static propTypes = {
+    selected: PropTypes.string,
+    options: PropTypes.arrayOf(
+      PropTypes.string
+    ).isRequired,
+    onTabChange: PropTypes.func
   }
 
   onChangeTab = (selected) => {
-    if (selected === this.state.selected){
+    if (selected === this.props.selected){
       return
     }
     this.props.onTabChange(selected)
-    this.setState({selected})
   }
 
   render() {
-    const { options } = this.props;
-    const { selected } = this.state;
+    const { options, selected } = this.props;
     return (
       <View style={styles.publicFriendFilter}>
         <View style={styles.toggleContainer}>

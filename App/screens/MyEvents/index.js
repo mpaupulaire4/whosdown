@@ -7,40 +7,49 @@ import PropTypes from 'prop-types';
 import env from '../../Data'
 import MyEvents from './MyEvents'
 
-
 const MyEventsQuery = graphql`
-  query MyEventsQuery($hostedFilter: EventSearchInput, $particFilter: EventSearchInput) {
-    hostedEvents: events(filter: $hostedFilter) {
+query MyEventsQuery($hostedFilter: EventSearchInput, $particFilter: EventSearchInput) {
+  hostedEvents: events(filter: $hostedFilter) {
+    id
+    title
+    description
+    time
+    host {
       id
-      title
-      description
-      time
-      host {
-        id
-        display_name
-      }
-      participants {
-        id
-        display_name
-      }
-      visibility
+      display_name
     }
-    participatingEvents: events(filter: $particFilter) {
+    participants {
       id
-      title
-      description
-      time
-      host {
-        id
-        display_name
-      }
-      participants {
-        id
-        display_name
-      }
-      visibility
+      display_name
     }
+    location {
+      address
+      latitude
+      longitude
+    }
+    visibility
   }
+  participatingEvents: events(filter: $particFilter) {
+    id
+    title
+    description
+    time
+    host {
+      id
+      display_name
+    }
+    participants {
+      id
+      display_name
+    }
+    location {
+      address
+      latitude
+      longitude
+    }
+    visibility
+  }
+}
 `
 
 export default class MyEventsContainer extends Component {
@@ -54,6 +63,11 @@ export default class MyEventsContainer extends Component {
     hostedEvents: [],
     participatingEvents: [],
   }
+
+  navToEventDetail = (event) => {
+    this.props.navigation.navigate('EventDetail', { event })
+  }
+
   render() {
     return (
       <QueryRenderer
@@ -61,27 +75,25 @@ export default class MyEventsContainer extends Component {
         query={MyEventsQuery}
         variables={{
           hostedFilter: {
-            host: 'users/525716'
+            host: 'users/525716',
           },
           particFilter: {
-            host: 'users/525716'
+            participants: ['users/525716'],
           },
         }}
-        render={({props = {}, error, retry}) => {
+        render={({props, error, retry}) => {
           if (props) {
             this.data = props
           }
-
-          {/* if (error) {
+          if (error) {
             setTimeout(() => {
               this.props.navigation.navigate('Login');
             }, 10);
-          } else if (props && props.current_user) {
-            this.user = props.current_user
-          } */}
+          }
           return <MyEvents
             participatingEvents={this.data.participatingEvents}
             hostedEvents={this.data.hostedEvents}
+            onEventPress={this.navToEventDetail}
           />
         }}
       />

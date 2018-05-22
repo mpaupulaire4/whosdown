@@ -85,25 +85,37 @@ const styles = StyleSheet.create({
   },
   slideContainer: {
     backgroundColor: silver(),
-    position: 'absolute',
     paddingHorizontal: 15,
     paddingVertical: 20,
-    left: 0,
-    right: 0,
-    bottom: 0
   }
 })
 
 
 export default class EventCard extends PureComponent {
   static propTypes = {
-    joinEvent: PropTypes.func.isRequired,
+    joinEvent: PropTypes.func,
+    onPress: PropTypes.func,
     event: PropTypes.shape({
       id: PropTypes.string.isRequired,
-    }).isRequired
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      time: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.instanceOf(Date),
+      ]).isRequired,
+      location: PropTypes.shape({
+        address: PropTypes.string,
+      })
+    }).isRequired,
+    actions: PropTypes.bool,
+    locked: PropTypes.bool,
+    slim: PropTypes.bool,
+    chatOpen: PropTypes.bool,
+    open: PropTypes.bool,
   };
+
   static defaultProps = {
-    event: {},
     actions: true,
     locked: false,
     slim: false,
@@ -115,7 +127,6 @@ export default class EventCard extends PureComponent {
   state = {
     isExpanded: this.props.open,
     anim: null,
-    showModal: false,
     chatOpen: this.props.chatOpen
   };
 
@@ -160,61 +171,20 @@ export default class EventCard extends PureComponent {
 
   handleSlideToggle = async () => {
     const { onPress, locked, open } = this.props
+    if (!locked) {
+      this.setState({ isExpanded: !this.state.isExpanded })
+    }
     onPress && onPress(this.props.event)
-    if (locked) {
-      return;
-    }
-    this.setState({ isExpanded: !this.state.isExpanded })
-  }
-
-  toggleModal() {
-    this.setState({ showModal: false })
-  }
-
-  setSliderHeight = ({nativeEvent: {layout}}) => {
-    if (!this.sliderHeight ){
-      this.sliderHeight = layout.height
-    }
-  }
-  setInfoHeight = ({nativeEvent: {layout}}) => {
-    if (this.infoHeight !== layout.height){
-      this.infoHeight = layout.height
-    }
   }
 
   toggleChat = () => {
     this.setState({chatOpen: !this.state.chatOpen})
   }
 
-  render() {
-    const { isExpanded, sliderHeight, infoHeight, chatOpen } = this.state
-    const { event, slim, actions, joinEvent } = this.props
-    let eventTime = ''
-    let etMoment = moment(event.time)
-    let height = null
-    let heightI = null
-    if (this.state.anim) {
-      height = this.state.anim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [this.infoHeight, this.infoHeight + this.sliderHeight],
-      });
-      heightI = this.state.anim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, this.sliderHeight],
-      })
-    }
-    if (moment().isSame(moment(event.time), 'd')) {
-      eventTime = 'Today, '
-    } else {
-      eventTime = etMoment.format('ddd, MMM D [at] ')
-    }
-    if (etMoment.minutes() === 0) {
-      eventTime += etMoment.format('hA')
-    } else {
-      eventTime += etMoment.format('h:mm A')
-    }
-    let eventParticipants = (
-      <Animated.View style={[ styles.slideContainer, {height: heightI, opacity: this.state.anim || 0}]} onLayout={this.setSliderHeight}>
+  renderSlider = () => {
+    const { event, actions, joinEvent } = this.props
+    return (
+      <View style={[ styles.slideContainer ]}>
         <Icon name="people"  color={background} size={25}/>
         <ParticipantsListing participants={event.participants} />
         {!actions ? null : (
@@ -223,16 +193,20 @@ export default class EventCard extends PureComponent {
             <RoundButton color={silver()} title="Discussion" onPress={this.toggleChat} textStyle={{color: background}} height={25}/>
           </View>
         )}
-      </Animated.View>
+      </View>
     )
+  }
+
+  render() {
+    const { isExpanded, sliderHeight, infoHeight, chatOpen } = this.state
+    const { event, slim, actions, joinEvent } = this.props
     const locationDisplay = isExpanded ? event.location.address : (event.distance ? `${(Math.round((event.distance * 0.621371) * 10) / 10).toPrecision(2)} mi` : false)
     return (
-      <Animated.View style={[styles.container, {height: height || null}]} >
-        {eventParticipants}
-        <TouchableWithoutFeedback onPress={this.handleSlideToggle} onLayout={this.setInfoHeight}>
+      <View style={[styles.container]} >
+        <TouchableWithoutFeedback onPress={this.handleSlideToggle}>
           <View style={styles.cardContainer} >
             <View style={styles.imageContainer}>
-              <Image style={styles.image} source={{uri: event.image || 'http://s7.orientaltrading.com/is/image/OrientalTrading/VIEWER_IMAGE_400/latex-bright-balloons~13703512'}}/>
+              <Image style={styles.image} source={{uri: event.image }}/>
             </View>
             <View style={styles.cardInfo}>
               <Text style={styles.headerText}>{event.title}</Text>
@@ -246,18 +220,19 @@ export default class EventCard extends PureComponent {
                 )}
                 <View style={styles.textIconContainer}>
                   <Icon color={background} size={20} name="clock" />
-                  <Text style={styles.detailsText}>{eventTime}</Text>
+                  <Text style={styles.detailsText}>{moment(event.time).calendar()}</Text>
                 </View>
               </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
+        {isExpanded ? <this.renderSlider/> : null}
         {/* <ChatModal
           show={chatOpen}
           onRequestClose={this.toggleChat}
           conversationID={event.id}
         /> */}
-      </Animated.View>
+      </View>
     )
   }
 }

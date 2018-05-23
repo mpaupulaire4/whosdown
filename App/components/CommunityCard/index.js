@@ -113,7 +113,7 @@ export default class EventCard extends PureComponent {
     slim: PropTypes.bool,
     chatOpen: PropTypes.bool,
     open: PropTypes.bool,
-  };
+  }
 
   static defaultProps = {
     actions: true,
@@ -121,32 +121,12 @@ export default class EventCard extends PureComponent {
     slim: false,
     chatOpen: false,
     open: false
-  };
-  sliderHeight = null;
-  infoHeight = null;
+  }
+
   state = {
     isExpanded: this.props.open,
-    anim: null,
     chatOpen: this.props.chatOpen
   };
-
-  componentDidUpdate = async (props, state) => {
-    if (this.state.isExpanded !== state.isExpanded) {
-      setTimeout(() => {
-        const finalValue = !this.state.isExpanded ? 0 : 1
-        const startValue = this.state.isExpanded ? 0 : 1
-        this.setState({anim: new Animated.Value(startValue)}, () => {
-          Animated.timing(
-            this.state.anim, {
-              toValue: finalValue,
-              duration: ANIM_DURATION,
-              easing: Easing.linear
-            }
-          ).start()
-        })
-      }, 100)
-    }
-  }
 
   componentWillReceiveProps = async ({open, locked, chatOpen}) => {
     if (
@@ -162,13 +142,6 @@ export default class EventCard extends PureComponent {
     }
   }
 
-  componentDidMount = async () => {
-    const {open} = this.props;
-    if (typeof open === 'boolean' && open){
-      this.componentDidUpdate(null, {isExpanded: !open})
-    }
-  }
-
   handleSlideToggle = async () => {
     const { onPress, locked, open } = this.props
     if (!locked) {
@@ -181,7 +154,7 @@ export default class EventCard extends PureComponent {
     this.setState({chatOpen: !this.state.chatOpen})
   }
 
-  renderSlider = () => {
+  Slider = () => {
     const { event, actions, joinEvent } = this.props
     return (
       <View style={[ styles.slideContainer ]}>
@@ -198,7 +171,7 @@ export default class EventCard extends PureComponent {
   }
 
   render() {
-    const { isExpanded, sliderHeight, infoHeight, chatOpen } = this.state
+    const { isExpanded, chatOpen } = this.state
     const { event, slim, actions, joinEvent } = this.props
     const locationDisplay = isExpanded ? event.location.address : (event.distance ? `${(Math.round((event.distance * 0.621371) * 10) / 10).toPrecision(2)} mi` : false)
     return (
@@ -226,7 +199,7 @@ export default class EventCard extends PureComponent {
             </View>
           </View>
         </TouchableWithoutFeedback>
-        {isExpanded ? <this.renderSlider/> : null}
+        {isExpanded ? <this.Slider/> : null}
         {/* <ChatModal
           show={chatOpen}
           onRequestClose={this.toggleChat}

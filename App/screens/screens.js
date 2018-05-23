@@ -8,8 +8,8 @@ import AppLoading from './AppLoading'
 import Login from './Login'
 import Profile from './Profile'
 import MyEvents from './MyEvents'
+import Community from './Community'
 // import Create from './Create'
-// import Community from './Community'
 // import Squad from './Squad'
 // import MyEvents from './MyEvents'
 // import EventDetails from './EventDetails'
@@ -38,17 +38,20 @@ export const MyEventsStack = createStackNavigator({
   }
 })
 
-// export const CommunityRouteConfig = {
-//   Community: {
-//     screen: Community,
-//   },
-//   Create: {
-//     screen: Create,
-//     navigationOptions: {
-//       tabBarVisible: false
-//     },
-//   },
-// }
+export const CommunityStack = createStackNavigator({
+  Community,
+  // Create: {
+  //   screen: Create,
+  //   navigationOptions: {
+  //     tabBarVisible: false
+  //   },
+  // },
+}, {
+  initialRouteName: 'Community',
+  navigationOptions: {
+    header: null
+  }
+})
 
 const AppMain = createBottomTabNavigator({
   MyEvents: {
@@ -57,16 +60,12 @@ const AppMain = createBottomTabNavigator({
       title: 'My Events',
     },
   },
-  // Community: {
-  //   screen: createStackNavigator(CommunityRouteConfig, {
-  //     initialRouteName: 'Community',
-  //     navigationOptions: {
-  //       header: null
-  //     }
-  //   })
-  // },
+  Community: {
+    screen: CommunityStack
+  },
   Profile,
 }, {
+  initialRouteName: 'Community',
   tabBarPosition: 'bottom',
   lazy: true,
   swipeEnabled: true,

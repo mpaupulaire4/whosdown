@@ -14,40 +14,22 @@ query MyEventsQuery($hostedFilter: EventSearchInput, $particFilter: EventSearchI
     title
     description
     time
-    host {
-      id
-      display_name
-    }
-    participants {
-      id
-      display_name
-    }
     location {
       address
       latitude
       longitude
     }
-    visibility
   }
   participatingEvents: events(filter: $particFilter) {
     id
     title
     description
     time
-    host {
-      id
-      display_name
-    }
-    participants {
-      id
-      display_name
-    }
     location {
       address
       latitude
       longitude
     }
-    visibility
   }
 }
 `
@@ -82,8 +64,12 @@ export default class MyEventsContainer extends Component {
           },
         }}
         render={({props, error, retry}) => {
+          let loading = false;
           if (props) {
             this.data = props
+            loading = false
+          } else {
+            loading = true
           }
           if (error) {
             setTimeout(() => {
@@ -91,6 +77,8 @@ export default class MyEventsContainer extends Component {
             }, 10);
           }
           return <MyEvents
+            onRefresh={retry}
+            loading={loading}
             participatingEvents={this.data.participatingEvents}
             hostedEvents={this.data.hostedEvents}
             onEventPress={this.navToEventDetail}

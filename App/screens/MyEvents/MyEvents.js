@@ -32,6 +32,7 @@ const EventPropType = PropTypes.shape({
 })
 export default class MyEvents extends Component {
   static propTypes = {
+    onRefresh: PropTypes.func,
     hostedEvents: PropTypes.arrayOf(
       EventPropType
     ).isRequired,
@@ -69,7 +70,7 @@ export default class MyEvents extends Component {
 
 
   render() {
-    const { hostedEvents, participatingEvents } = this.props
+    const { hostedEvents, participatingEvents, onRefresh, loading } = this.props
     const { selected } = this.state
     return (
       <View style={styles.rowContainer}>
@@ -80,6 +81,8 @@ export default class MyEvents extends Component {
             selected={selected}
           />
           <FlatList
+            onRefresh={onRefresh}
+            refreshing={loading}
             data={this.state.selected === TABS[0] ? hostedEvents : participatingEvents}
             keyExtractor={this._keyExtractor}
             renderItem={this.renderCard}

@@ -11,7 +11,6 @@ import MyEvents from './MyEvents'
 import Community from './Community'
 // import Create from './Create'
 // import Squad from './Squad'
-// import MyEvents from './MyEvents'
 // import EventDetails from './EventDetails'
 // import TabBar from '../components/TabBar'
 // import { highlight4, highlight3 } from '../styles/colors';

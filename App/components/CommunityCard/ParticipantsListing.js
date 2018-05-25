@@ -6,39 +6,40 @@ import {
   TouchableOpacity,
   StyleSheet
 } from 'react-native'
+import PropTypes from 'prop-types'
 import UserBubble from '../UserBubble'
 import { highlight1 } from '../../styles/colors'
 
+const styles = StyleSheet.create({
+  participantContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    paddingVertical: 5,
+  }
+})
+
 export default class ParticipantsListing extends Component {
+  static propTypes = {
+    size: PropTypes.number,
+    participants: PropTypes.array.isRequired,
+  }
+
   static defaultProps = {
-    participants: {},
+    participants: [],
     size: 40,
   }
-  constructor(props) {
-    super(props)
-    this.subscribeToEvent = this.subscribeToEvent.bind(this)
-  }
-  subscribeToEvent() {
 
-  }
-  styles = StyleSheet.create({
-    participantContainer: {
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'flex-start',
-      flexWrap: 'wrap',
-      paddingVertical: 5,
-    }
-  })
   render() {
-    let { participants } = this.props
-    let eventParticipants = Object.keys(participants).map((value, index) => {
+    const { participants } = this.props
+    const eventParticipants = participants.map((user, index) => {
       return (
-        <UserBubble size={this.props.size} key={value} user={participants[value]} />
+        <UserBubble size={this.props.size} key={user.id} user={user} />
       )
     })
     return (
-      <View style={this.styles.participantContainer}>
+      <View style={styles.participantContainer}>
         {eventParticipants}
       </View>
     )

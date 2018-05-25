@@ -47,7 +47,7 @@ export default class MyEventsContainer extends Component {
   }
 
   navToEventDetail = (event) => {
-    this.props.navigation.navigate('EventDetail', { event })
+    this.props.navigation.navigate('EventDetails', { event })
   }
 
   render() {

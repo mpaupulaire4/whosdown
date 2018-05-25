@@ -9,21 +9,16 @@ import Login from './Login'
 import Profile from './Profile'
 import MyEvents from './MyEvents'
 import Community from './Community'
+import EventDetails from './EventDetails'
 // import Create from './Create'
 // import Squad from './Squad'
-// import EventDetails from './EventDetails'
 // import TabBar from '../components/TabBar'
 // import { highlight4, highlight3 } from '../styles/colors';
-// import HeaderBar from '../components/HeaderBar'
+import HeaderBar from '../components/HeaderBar'
 
 export const MyEventsStack = createStackNavigator({
   MyEvents,
-  // EventDetails: {
-  //   screen: EventDetails,
-  //   navigationOptions: {
-  //     tabBarVisible: false
-  //   },
-  // },
+  EventDetails,
   // EditEvent: {
   //   screen: Create,
   //   navigationOptions: {

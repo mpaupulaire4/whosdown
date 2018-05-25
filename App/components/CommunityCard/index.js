@@ -123,6 +123,28 @@ export default class EventCard extends PureComponent {
     open: false
   }
 
+  static Actions = ({onDown, onDiscussion, down = false }) => {
+    return (
+      <View style={[styles.buttonContainer]} >
+        { down ? null : (
+          <RoundButton
+            color={background}
+            title="I'M DOWN"
+            onPress={onDown}
+            height={25}
+          />
+        )}
+        <RoundButton
+          color={silver()}
+          title="Discussion"
+          onPress={onDiscussion}
+          textStyle={{color: background}}
+          height={25}
+        />
+      </View>
+    )
+  }
+
   state = {
     isExpanded: this.props.open,
     chatOpen: this.props.chatOpen
@@ -161,10 +183,7 @@ export default class EventCard extends PureComponent {
         <Icon name="people"  color={background} size={25}/>
         <ParticipantsListing participants={event.participants} />
         {!actions ? null : (
-          <View style={[styles.buttonContainer]} >
-            <RoundButton color={background} title="I'M DOWN" onPress={joinEvent} height={25}/>
-            <RoundButton color={silver()} title="Discussion" onPress={this.toggleChat} textStyle={{color: background}} height={25}/>
-          </View>
+          <EventCard.Actions onDown={joinEvent} onDiscussion={this.toggleChat}/>
         )}
       </View>
     )

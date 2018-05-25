@@ -8,6 +8,7 @@ import {
   Image,
   Platform,
 } from 'react-native'
+import PropTypes from 'prop-types'
 // import ChatsService from '../../services/Chats'
 import Gradient from '../Gradient'
 import { background, silver } from '../../styles/colors'
@@ -26,6 +27,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  footerContent: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   downText: {
     backgroundColor: 'transparent',
     color: 'white',
@@ -41,16 +46,41 @@ const styles = StyleSheet.create({
 })
 
 export default class ChatModal extends Component {
+  static propTypes = {
+    show: PropTypes.bool,
+    onRequestClose: PropTypes.func,
+    onPostMessage: PropTypes.func.isRequired,
+    messages: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+        owner: PropTypes.string.isRequired,
+        timestamp: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number,
+        ]).isRequired
+      })
+    ).isRequired,
+    convo: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      participants: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          display_name: PropTypes.string,
+          last_viewed: PropTypes.number.isRequired,
+        }).isRequired
+      ).isRequired,
+    })
+  }
+
   static defaultProps = {
     show: true,
     onRequestClose: () => {},
   }
 
-  state = {
-    participants: {},
-    title: '',
-    messages: []
-  }
+  participants = {}
+  text = ''
 
   componentWillMount(){
     this.init()
@@ -61,45 +91,36 @@ export default class ChatModal extends Component {
   }
 
   init = (props = this.props) => {
-    const { conversationID } = props
-    if (!conversationID) {
-      return
-    }
-    // ChatsService.getConversationById(conversationID).then(({messages, ...convo}) => {
-    //   if (!convo){
-    //     return
-    //   }
-    //   this.setState({...convo})
-    // })
-    // ChatsService.watchMessagesById(conversationID, (messages) => {
-    //   if (!messages){
-    //     return
-    //   }
-    //   this.setState({messages: Object.values(messages || {}) })
-    // })
+    const { convo } = props;
+    this.participants = convo.participants.reduce((obj, user = {}) => ({
+      ...obj,
+      [user.id]: user,
+    }), {})
   }
 
   submitPost = () => {
-    const { conversationID } = this.props
-    // ChatsService.postMessage(conversationID, {text: this.text}).then(() => {
-    //   this.input && this.input.clear()
-    //   this.text = ''
-    // })
+    const { convo, onPostMessage } = this.props
+    onPostMessage({
+      conversation_id: convo.id,
+      text: this.text,
+    })
+    this.input && this.input.clear()
+    this.text = ''
   }
 
   render() {
     const { show, onRequestClose } = this.props
+    const { messages, title } = this.state
     const userId = '';
-    const { messages, title, participants } = this.state
     let lastOwner = null;
     let downText = null
     let footerContent = (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <View style={styles.footerContent}>
         <GrowingInput style={styles.input} placeholder="...MESSAGE" onChangeText={(text) => this.text = text} ref={(r) => this.input = r}/>
         <Button title="Send" textStyle={{fontSize: 16}} width={75} onPress={this.submitPost}/>
       </View>
     )
-    if (!participants[userId]) {
+    if (!this.participants[userId]) {
       downText = <Text style={styles.downText}>Say you’re down to join the discussion</Text>
       footerContent = <Button title="I'm Down!"/>
     }
@@ -111,7 +132,7 @@ export default class ChatModal extends Component {
             {messages.map(({text, displayName, photoURL, owner}, index) => {
               let user = null;
               if (lastOwner !== owner) {
-                user = participants[userId]
+                user = this.participants[userId]
                 lastOwner = owner
               }
               return <MessageBuuble text={text} key={index} user={user} right={ owner === userId }/>
@@ -128,53 +149,52 @@ export default class ChatModal extends Component {
   }
 }
 
-function MessageBuuble(props){
-  const { user, text, right } = props
-  const style = StyleSheet.create({
-    userRow: {
-      flexDirection: right ? 'row-reverse' : 'row',
-      alignItems: 'center',
-      paddingBottom: 5,
-      paddingTop: 10
-    },
-    userImage: {
-      width: 15,
-      height: 15,
-      resizeMode: 'contain',
-      alignSelf: right ? "flex-end" :'flex-start',
-    },
-    username: {
-      backgroundColor: 'transparent',
-      color: 'white',
-      paddingHorizontal: 10,
-      fontSize: 10,
-    },
-    textBox: {
-      backgroundColor: silver(),
-      marginHorizontal: 20,
-      padding: 10,
-      maxWidth: '90%',
-      borderRadius: 10,
-      marginBottom: 1,
-      minWidth: 5,
-      alignSelf: right ? "flex-end" :'flex-start',
-    },
-    text: {
-      color: background,
-      fontSize: 16,
-      backgroundColor: 'transparent'
-    }
-  })
+const bubbleStyles = StyleSheet.create({
+  userRow: {
+    flexDirection: right ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    paddingBottom: 5,
+    paddingTop: 10
+  },
+  userImage: {
+    width: 15,
+    height: 15,
+    resizeMode: 'contain',
+    alignSelf: right ? "flex-end" :'flex-start',
+  },
+  username: {
+    backgroundColor: 'transparent',
+    color: 'white',
+    paddingHorizontal: 10,
+    fontSize: 10,
+  },
+  textBox: {
+    backgroundColor: silver(),
+    marginHorizontal: 20,
+    padding: 10,
+    maxWidth: '90%',
+    borderRadius: 10,
+    marginBottom: 1,
+    minWidth: 5,
+    alignSelf: right ? "flex-end" :'flex-start',
+  },
+  text: {
+    color: background,
+    fontSize: 16,
+    backgroundColor: 'transparent'
+  }
+})
+
+function MessageBuuble({ user, text, right }){
   return (
     <View>
       { user ?  (
-        <View style={style.userRow}>
-          <Image style={style.userImage} source={{uri: user.photoURL}} />
-          <Text style={style.username}>{user.displayName}</Text>
+        <View style={bubbleStyles.userRow}>
+          <Text style={bubbleStyles.username}>{user.display_name}</Text>
         </View>
       ) : null}
-      <View style={style.textBox} >
-        <Text style={style.text} selectable>{text}</Text>
+      <View style={bubbleStyles.textBox} >
+        <Text style={bubbleStyles.text} selectable>{text}</Text>
       </View>
     </View>
   )

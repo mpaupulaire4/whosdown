@@ -10,7 +10,7 @@ import {
 } from 'react-native-fbsdk'
 import PropTypes from 'prop-types';
 import Login from './Login';
-import { WHOSDOWN_TOKEN_KEY } from '../../Data/constants'
+import { WHOSDOWN_TOKEN_KEY } from '../../constants'
 
 
 export default class LoginContainer extends Component {

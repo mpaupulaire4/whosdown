@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "schema": "babel-node getSchema.js",
     "relay": "relay-compiler --src ./App --schema ./schema.graphql --extensions js jsx",
     "test": "jest"
   },
@@ -21,6 +22,7 @@
     "react-relay": "^1.6.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-jest": "22.4.3",
     "babel-plugin-relay": "^1.6.0",
     "babel-preset-react-native": "4.0.0",

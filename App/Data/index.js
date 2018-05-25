@@ -7,14 +7,14 @@ import {
 import {
   AsyncStorage
 } from 'react-native'
-import { WHOSDOWN_TOKEN_KEY } from './constants'
+import { WHOSDOWN_TOKEN_KEY, API_URL } from '../constants'
 
 async function fetchQuery(
   operation,
   variables,
 ) {
   const token = await AsyncStorage.getItem(WHOSDOWN_TOKEN_KEY)
-  return fetch('http://localhost:3100/graphql', {
+  return fetch(`${API_URL}/graphql`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

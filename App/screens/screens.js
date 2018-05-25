@@ -25,15 +25,6 @@ export const MyEventsStack = createStackNavigator({
   //     tabBarVisible: false
   //   },
   // }
-}, {
-  initialRouteName: 'MyEvents',
-  navigationOptions: {
-    header: null
-  }
-})
-
-export const CommunityStack = createStackNavigator({
-  Community,
   // Create: {
   //   screen: Create,
   //   navigationOptions: {
@@ -41,7 +32,7 @@ export const CommunityStack = createStackNavigator({
   //   },
   // },
 }, {
-  initialRouteName: 'Community',
+  initialRouteName: 'MyEvents',
   navigationOptions: {
     header: null
   }
@@ -54,9 +45,7 @@ const AppMain = createBottomTabNavigator({
       title: 'My Events',
     },
   },
-  Community: {
-    screen: CommunityStack
-  },
+  Community,
   Profile,
 }, {
   initialRouteName: 'Community',

@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { graphql, QueryRenderer } from 'react-relay';
+import { graphql, fetchQuery } from 'react-relay';
 import PropTypes from 'prop-types';
 import Gradient from '../../components/Gradient';
 import env from '../../Data'
@@ -12,6 +12,14 @@ import env from '../../Data'
   type Props = {};
 */
 
+const AppLoadingQuery = graphql`
+query AppLoadingQuery {
+  current_user {
+    id
+  }
+}
+`
+
 export default class AppLoading extends Component/* :: <Props> */ {
   static propTypes = {
     navigation: PropTypes.shape({
@@ -19,33 +27,23 @@ export default class AppLoading extends Component/* :: <Props> */ {
     }).isRequired,
   }
 
-  render = () => {
+  async componentWillMount() {
+    return fetchQuery(env,AppLoadingQuery).then((data = {}) => {
+      if (data.current_user) {
+        this.props.navigation.navigate('AppMain');
+      } else {
+        this.props.navigation.navigate('Login');
+      }
+    }).catch((e) => {
+      this.props.navigation.navigate('Login');
+    })
+  }
+
+  render() {
+    // ADD YOUR APP LOADING SCREEN HERE (LIKE DISMISSING THE SPLASH AND SUCH)
     return (
-      <QueryRenderer
-        environment={env}
-        query={graphql`
-          query AppLoadingQuery {
-            current_user {
-              id
-            }
-          }
-        `}
-        render={({error, props}) => {
-          if (error || (props && !props.current_user)) {
-            setTimeout(() => {
-              this.props.navigation.navigate('Login');
-            }, 10);
-          }
-          if (props && props.current_user) {
-            setTimeout(() => {
-              this.props.navigation.navigate('AppMain');
-            }, 10);
-          }
-          return (<Gradient style={{flex: 1}}/>);
-        }}
-      />
+      <Gradient style={{flex: 1}}/>
     )
-    return
   };
 }
 

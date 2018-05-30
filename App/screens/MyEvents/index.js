@@ -14,6 +14,7 @@ query MyEventsQuery($hostedFilter: EventSearchInput, $particFilter: EventSearchI
     title
     description
     time
+    convo_id
     location {
       address
       latitude
@@ -25,6 +26,7 @@ query MyEventsQuery($hostedFilter: EventSearchInput, $particFilter: EventSearchI
     title
     description
     time
+    convo_id
     location {
       address
       latitude

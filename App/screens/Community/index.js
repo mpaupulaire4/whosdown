@@ -3,44 +3,58 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native'
-import { graphql, QueryRenderer } from 'react-relay'
+import { graphql, QueryRenderer, commitMutation } from 'react-relay'
 import { Map } from 'immutable'
 import PropTypes from 'prop-types'
 import env from '../../Data'
 import Community from './Community'
+import Chat from './Chat'
 
 
 const CommunityQuery = graphql`
-  query CommunityQuery(
-    $view: VIEW
-    $location: LocationInput!
-  )  {
-    events: events_by_location(
-      location: $location,
-      view: $view
-    ) {
+query CommunityQuery(
+  $view: VIEW
+  $location: LocationInput!
+) {
+  events: events_by_location(
+    location: $location,
+    view: $view
+  ) {
+    id
+    title
+    description
+    time
+    host {
       id
-      title
-      description
-      time
-      host {
-        id
-        display_name
-        photo_url
-      }
-      location {
-        address
-        latitude
-        longitude
-      }
-      participants {
-        id
-        display_name
-        photo_url
-      }
-      visibility
+      display_name
+      photo_url
+    }
+    location {
+      address
+      latitude
+      longitude
+    }
+    participants {
+      id
+      display_name
+      photo_url
+    }
+    visibility
+  }
+}
+`
+const JoinEventMutation = graphql`
+mutation CommunityJoinEventMutation(
+  $id: ID!
+) {
+  join_event(id: $id) {
+    participants {
+      id
+      display_name
+      photo_url
     }
   }
+}
 `
 
 export default class CommunityContainer extends Component {
@@ -56,7 +70,9 @@ export default class CommunityContainer extends Component {
         latitude: 0,
         longitude: 0
       })
-    })
+    }),
+    chat: false,
+    convo_id: '',
   }
   events = []
   watchID = null
@@ -102,56 +118,76 @@ export default class CommunityContainer extends Component {
     navigator.geolocation.clearWatch(this.watchID);
   }
 
-  locationSuccess = ({coords: { latitude, longitude }}) => {
-    this.setState({
-      filter: this.state.filter
-        .setIn(['location', 'latitude'], latitude)
-        .setIn(['location', 'longitude'], longitude)
-    })
+  locationSuccess = ({coords: { latitude, longitude }}) => this.setState({
+    filter: this.state.filter
+      .setIn(['location', 'latitude'], latitude)
+      .setIn(['location', 'longitude'], longitude),
+  })
+
+  onJoinEvent = (event) => {
+    commitMutation(
+      env,
+      {
+        mutation: JoinEventMutation,
+        variables: {
+          id: event.id,
+        },
+        onCompleted: () => this.props.navigation.navigate('EventDetails', { event })
+      }
+    )
   }
 
-  onFilterChange = (key, value) => {
-    this.setState({
-      filter: this.state.filter.set(key, value)
-    })
-  }
+  onFilterChange = (key, value) => this.setState({
+    filter: this.state.filter.set(key, value)
+  })
 
-  onCreate = () => {
-    this.props.navigation.navigate('CreateEvent')
-  }
+  onCreate = () => this.props.navigation.navigate('CreateEvent')
+
+  toggleChat = () => this.setState({chat: !this.state.chat})
+
+  setConvoId = ({convo_id}) => this.setState({ convo_id, chat: true })
+
+  toLogin = () => this.props.navigation.navigate('Login')
 
   render = () => {
     return (
-      <QueryRenderer
-        environment={env}
-        query={CommunityQuery}
-        variables={this.state.filter.toJS()}
-        render={({props, error, retry}) => {
-          let loading = true
-          if (error) {
-            setTimeout(() => {
-              this.props.navigation.navigate('Login');
-            }, 10);
-          }
-          if (!props) {
-            loading = true
-          }
-          if (props) {
-            loading = false
-            this.events = props.events
-          }
-          return (
-            <Community
-              events={this.events}
-              filters={this.state.filter.toJS()}
-              loading={loading}
-              onCreate={this.onCreate}
-              onFilterChange={this.onFilterChange}
-              onRefresh={retry}
-            />
-          )
-        }}
-      />
+      <React.Fragment>
+        <QueryRenderer
+          environment={env}
+          query={CommunityQuery}
+          variables={this.state.filter.toJS()}
+          render={({props, error, retry}) => {
+            let loading = true
+            if (error) {
+              setTimeout(this.toLogin, 10);
+            }
+            if (!props) {
+              loading = true
+            } else {
+              loading = false
+              this.events = props.events
+            }
+            return (
+              <Community
+                events={this.events}
+                filters={this.state.filter.toJS()}
+                loading={loading}
+                onCreate={this.onCreate}
+                onFilterChange={this.onFilterChange}
+                onOpenChat={this.setConvoId}
+                onJoinEvent={this.onJoinEvent}
+                onRefresh={retry}
+              />
+            )
+          }}
+        />
+        <Chat
+          show={this.state.chat}
+          convo_id={this.state.convo_id}
+          toLogin={this.toLogin}
+          onRequestClose={this.toggleChat}
+        />
+      </React.Fragment>
     )
   }
 }

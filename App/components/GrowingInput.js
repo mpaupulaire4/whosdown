@@ -9,35 +9,29 @@ export default class GrowingInput extends Component {
     minHeight: 30,
     onChange: () => {}
   }
-  constructor(props) {
-    super(props)
-    this.state = {
-      height: props.minHeight
-    }
-    this._onChange = this._onChange.bind(this)
+
+  state = {
+    height: this.props.minHeight
   }
 
-  _onChange(event){
-    const { onChange, maxHieght, minHeight } = this.props
+  _onChange = (event) => {
+    const { maxHieght, minHeight } = this.props
     const height = event.nativeEvent.contentSize.height
 
     if (height >= minHeight && height <= maxHieght ){
       this.setState({height})
     }
-    onChange(event)
-  }
-
-  clear() {
-    this.input.clear()
-  }
-  blur() {
-    this.input.blur()
   }
 
   render() {
     const {style, ...props} = this.props
     return (
-      <TextInput ref={(r) => this.input = r } {...props} onChange={this._onChange} style={[style, {height: this.state.height}]} multiline={true}/>
+      <TextInput
+        {...props}
+        onContentSizeChange={this._onChange}
+        style={[style, {height: this.state.height}]}
+        multiline={true}
+      />
     )
   }
 }

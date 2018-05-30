@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   AsyncStorage,
 } from 'react-native'
@@ -10,28 +10,11 @@ import {
 import PropTypes from 'prop-types';
 import env from '../../Data'
 import ChatModal from '../../components/ChatModal'
-import EventDetails from './EventDetails'
 
-const EventDetailsQuery = graphql`
-query EventDetailsQuery($id: ID!, $convo_id: ID!) {
+const ChatQuery = graphql`
+query ChatQuery($convo_id: ID!) {
   current_user {
     id
-  }
-  event(id: $id) {
-    id
-    title
-    description
-    time
-    convo_id
-    location {
-      address
-      latitude
-      longitude
-    }
-    participants {
-      id
-      display_name
-    }
   }
   conversation(id: $convo_id) {
     id
@@ -51,7 +34,7 @@ query EventDetailsQuery($id: ID!, $convo_id: ID!) {
 }
 `
 const PostMessageMutation = graphql`
-mutation EventDetailsMutation($message: MessagePost!) {
+mutation ChatMutation($message: MessagePost!) {
   post_message(message: $message) {
     id
     owner
@@ -61,31 +44,21 @@ mutation EventDetailsMutation($message: MessagePost!) {
 }
 `
 
-export default class EventDetailsContainer extends Component {
+export default class ChatContainer extends PureComponent {
   static propTypes = {
-    navigation: PropTypes.shape({
-      navigate: PropTypes.func.isRequired,
-      getParam: PropTypes.func.isRequired,
-      goBack: PropTypes.func.isRequired,
-    }).isRequired,
+    convo_id: PropTypes.string.isRequired,
+    toLogin: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
   }
 
-  state = {
-    chat: false,
-  }
-
-  event = this.props.navigation.getParam('event', {})
   current_user = {id: ''}
   convo = {
-    id: '',
+    id: this.props.convo_id,
     title: '',
     participants: [],
     messages: [],
   }
-
-  back = () => this.props.navigation.goBack()
-
-  toggleChat = () => this.setState({chat: !this.state.chat})
 
   onPostMessage = ({
     text,
@@ -117,45 +90,34 @@ export default class EventDetailsContainer extends Component {
     return (
       <QueryRenderer
         environment={env}
-        query={EventDetailsQuery}
+        query={ChatQuery}
         variables={{
-          id: this.event.id,
-          convo_id: this.event.convo_id,
-          chat: this.state.chat,
+          convo_id: this.props.convo_id,
+          chat: this.props.show,
         }}
         render={({props, error, retry}) => {
           let loading = false;
           if (props) {
-            this.event = props.event
-            this.convo = props.conversation
+            this.convo = props.conversation || this.convo
             this.current_user = props.current_user
             loading = false
           } else {
             loading = true
           }
           if (error || (props && !props.current_user)) {
-            setTimeout(() => {
-              this.props.navigation.navigate('Login');
-            }, 10);
+            setTimeout(this.props.toLogin, 10);
           }
           return (
-            <React.Fragment>
-              <EventDetails
-                onBack={this.back}
-                event={this.event}
-                onDiscussion={this.toggleChat}
-              />
-              <ChatModal
-                show={this.state.chat}
-                current_user={this.current_user}
-                convo={this.convo}
-                messages={this.convo.messages}
-                onRequestClose={this.toggleChat}
-                loading={loading}
-                refresh={retry}
-                onPostMessage={this.onPostMessage}
-              />
-            </React.Fragment>
+            <ChatModal
+              show={this.props.show}
+              current_user={this.current_user}
+              convo={this.convo}
+              messages={this.convo.messages}
+              onRequestClose={this.props.onRequestClose}
+              loading={loading}
+              refresh={retry}
+              onPostMessage={this.onPostMessage}
+            />
           )
         }}
       />

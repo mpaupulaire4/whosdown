@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   View,
   FlatList,
@@ -69,11 +69,13 @@ const VIEWS = [
   INVITE_VIEW,
 ]
 
-export default class Community extends Component {
+export default class Community extends PureComponent {
   static propTypes = {
     events: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
     })).isRequired,
+    onJoinEvent: PropTypes.func.isRequired,
+    onOpenChat: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
     onFilterChange: PropTypes.func,
     loading: PropTypes.bool,
@@ -99,8 +101,13 @@ export default class Community extends Component {
   }
 
   _renderItem = ({item}) => {
+    const { onJoinEvent, onOpenChat } = this.props
     return (
-      <CommunityCard event={item} />
+      <CommunityCard
+        event={item}
+        joinEvent={() => onJoinEvent(item)}
+        openChat={() => onOpenChat(item)}
+      />
     )
   }
 

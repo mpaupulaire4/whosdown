@@ -21,7 +21,6 @@ import {
 } from '../../styles/colors';
 import Button from '../Button';
 import RoundButton from '../RoundButton';
-// import ChatModal from '../../components/ChatModal';
 import ParticipantsListing from './ParticipantsListing';
 
 const ANIM_DURATION = 200
@@ -94,6 +93,7 @@ const styles = StyleSheet.create({
 export default class EventCard extends PureComponent {
   static propTypes = {
     joinEvent: PropTypes.func,
+    openChat: PropTypes.func,
     onPress: PropTypes.func,
     event: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -111,7 +111,6 @@ export default class EventCard extends PureComponent {
     actions: PropTypes.bool,
     locked: PropTypes.bool,
     slim: PropTypes.bool,
-    chatOpen: PropTypes.bool,
     open: PropTypes.bool,
   }
 
@@ -119,7 +118,6 @@ export default class EventCard extends PureComponent {
     actions: true,
     locked: false,
     slim: false,
-    chatOpen: false,
     open: false
   }
 
@@ -147,10 +145,9 @@ export default class EventCard extends PureComponent {
 
   state = {
     isExpanded: this.props.open,
-    chatOpen: this.props.chatOpen
   };
 
-  componentWillReceiveProps = async ({open, locked, chatOpen}) => {
+  componentWillReceiveProps = async ({ open, locked }) => {
     if (
       typeof open === 'boolean' &&
       typeof locked === 'boolean' &&
@@ -158,9 +155,6 @@ export default class EventCard extends PureComponent {
       !locked
     ){
       this.setState({ isExpanded:  !this.state.isExpanded})
-    }
-    if (this.state.chatOpen !== chatOpen){
-      this.setState({ chatOpen })
     }
   }
 
@@ -172,25 +166,21 @@ export default class EventCard extends PureComponent {
     onPress && onPress(this.props.event)
   }
 
-  toggleChat = () => {
-    this.setState({chatOpen: !this.state.chatOpen})
-  }
-
   Slider = () => {
-    const { event, actions, joinEvent } = this.props
+    const { event, actions, joinEvent, openChat } = this.props
     return (
       <View style={[ styles.slideContainer ]}>
         <Icon name="people"  color={background} size={25}/>
         <ParticipantsListing participants={event.participants} />
         {!actions ? null : (
-          <EventCard.Actions onDown={joinEvent} onDiscussion={this.toggleChat}/>
+          <EventCard.Actions onDown={joinEvent} onDiscussion={openChat}/>
         )}
       </View>
     )
   }
 
   render() {
-    const { isExpanded, chatOpen } = this.state
+    const { isExpanded } = this.state
     const { event, slim, actions, joinEvent } = this.props
     const locationDisplay = isExpanded ? event.location.address : (event.distance ? `${(Math.round((event.distance * 0.621371) * 10) / 10).toPrecision(2)} mi` : false)
     return (
@@ -219,11 +209,6 @@ export default class EventCard extends PureComponent {
           </View>
         </TouchableWithoutFeedback>
         {isExpanded ? <this.Slider/> : null}
-        {/* <ChatModal
-          show={chatOpen}
-          onRequestClose={this.toggleChat}
-          conversationID={event.id}
-        /> */}
       </View>
     )
   }

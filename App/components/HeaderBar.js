@@ -40,11 +40,17 @@ const styles = StyleSheet.create({
     margin: 0
   }
 });
-export default function HeaderBar({onBack, title, margin = true, right}) {
+export default function HeaderBar({
+  onBack,
+  title,
+  margin = true,
+  right,
+  left = (<Icon name='ios-arrow-back' size={35} color={background} style={styles.icon}/>)
+}) {
   return (
     <View style={[styles.headerContainer, !margin ? {paddingTop: 0, height: 50} : {}]} >
       <TouchableOpacity style={styles.buttonContainer} onPress={onBack}>
-        <Icon name='ios-arrow-back' size={35} color={background} style={styles.icon}/>
+        {left}
       </TouchableOpacity>
       <Text style={styles.titleText}>{title}</Text>
       <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>

@@ -37,6 +37,7 @@ export default class EventDetails extends Component {
   static propTypes = {
     event: PropTypes.object.isRequired,
     onBack: PropTypes.func.isRequired,
+    onDiscussion: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,7 +50,7 @@ export default class EventDetails extends Component {
 
   render() {
     const { chatOpen } = this.state
-    const { event, onBack } = this.props
+    const { event, onBack, onDiscussion } = this.props
     return (
       <Gradient style={styles.container}>
         <HeaderBar title="Event Details" onBack={onBack}/>
@@ -63,7 +64,7 @@ export default class EventDetails extends Component {
           />
         </View>
         <View style={styles.footer}>
-          <CommunityCard.Actions/>
+          <CommunityCard.Actions down={true} onDiscussion={onDiscussion}/>
         </View>
       </Gradient>
     )

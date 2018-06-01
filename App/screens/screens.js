@@ -10,7 +10,7 @@ import Profile from './Profile'
 import MyEvents from './MyEvents'
 import Community from './Community'
 import EventDetails from './EventDetails'
-// import Create from './Create'
+import EditEvent from './EditEvent'
 // import Squad from './Squad'
 // import TabBar from '../components/TabBar'
 // import { highlight4, highlight3 } from '../styles/colors';
@@ -19,18 +19,7 @@ import HeaderBar from '../components/HeaderBar'
 export const MyEventsStack = createStackNavigator({
   MyEvents,
   EventDetails,
-  // EditEvent: {
-  //   screen: Create,
-  //   navigationOptions: {
-  //     tabBarVisible: false
-  //   },
-  // }
-  // Create: {
-  //   screen: Create,
-  //   navigationOptions: {
-  //     tabBarVisible: false
-  //   },
-  // },
+  EditEvent,
 }, {
   initialRouteName: 'MyEvents',
   navigationOptions: {
@@ -51,7 +40,6 @@ const AppMain = createBottomTabNavigator({
   initialRouteName: 'Community',
   tabBarPosition: 'bottom',
   lazy: true,
-  swipeEnabled: true,
   animationEnabled: true,
   removeClippedSubviews: true,
 })

@@ -9,14 +9,13 @@ import PropTypes from 'prop-types'
 
 const styles = StyleSheet.create({
   toggleContainer: {
-    height: 35,
-    borderColor: 'rgba(255,255,255,.4)',
     borderWidth: 1,
-    flex: 1,
     borderRadius: 5,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   toggleButton: {
+    paddingVertical: 5,
+    borderRightWidth: 1,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -24,12 +23,6 @@ const styles = StyleSheet.create({
   },
   toggleButtonText: {
     color: 'white'
-  },
-  publicFriendFilter: {
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row'
   },
 })
 
@@ -39,7 +32,12 @@ export default class BinaryButton extends Component {
     options: PropTypes.arrayOf(
       PropTypes.string
     ).isRequired,
-    onTabChange: PropTypes.func
+    onTabChange: PropTypes.func.isRequired,
+    color: PropTypes.string,
+  }
+
+  static defaultProps = {
+    color: 'rgba(255,255,255,.4)'
   }
 
   onChangeTab = (selected) => {
@@ -50,20 +48,28 @@ export default class BinaryButton extends Component {
   }
 
   render() {
-    const { options, selected } = this.props;
+    const { options, selected, color } = this.props;
     return (
-      <View style={styles.publicFriendFilter}>
-        <View style={styles.toggleContainer}>
-          {options.map((option) => (
-            <TouchableHighlight
-              underlayColor='rgba(255,255,255,.6)'
-              key={option}
-              onPress={() => this.onChangeTab(option)}
-              style={[styles.toggleButton, selected === option ? { backgroundColor: 'rgba(255,255,255,.4)' } : {}]}>
-              <Text style={[styles.toggleButtonText]}>{option}</Text>
-            </TouchableHighlight>
-          ))}
-        </View>
+      <View
+        style={[
+          styles.toggleContainer,
+          { borderColor: color,}
+        ]}
+      >
+        {options.map((option) => (
+          <TouchableHighlight
+            underlayColor='rgba(255,255,255,.6)'
+            key={option}
+            onPress={() => this.onChangeTab(option)}
+            style={[
+              styles.toggleButton,
+              { borderRightColor: color, },
+              selected === option ? { backgroundColor: color } : {}
+            ]}
+          >
+            <Text style={[styles.toggleButtonText]}>{option}</Text>
+          </TouchableHighlight>
+        ))}
       </View>
     )
   }

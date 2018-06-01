@@ -19,7 +19,6 @@ import {
   silver,
   shadow
 } from '../../styles/colors';
-import Button from '../Button';
 import RoundButton from '../RoundButton';
 import ParticipantsListing from './ParticipantsListing';
 
@@ -39,7 +38,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     backgroundColor: background,
-    width: '15%',
+    width: '10%',
     borderBottomLeftRadius: 5,
     borderTopLeftRadius: 5
   },
@@ -129,7 +128,6 @@ export default class EventCard extends PureComponent {
             color={background}
             title="I'M DOWN"
             onPress={onDown}
-            height={25}
           />
         )}
         <RoundButton
@@ -137,7 +135,6 @@ export default class EventCard extends PureComponent {
           title="Discussion"
           onPress={onDiscussion}
           textStyle={{color: background}}
-          height={25}
         />
       </View>
     )

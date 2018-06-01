@@ -141,7 +141,7 @@ export default class CommunityContainer extends Component {
     filter: this.state.filter.set(key, value)
   })
 
-  onCreate = () => this.props.navigation.navigate('CreateEvent')
+  onCreate = () => this.props.navigation.navigate('EditEvent')
 
   toggleChat = () => this.setState({chat: !this.state.chat})
 

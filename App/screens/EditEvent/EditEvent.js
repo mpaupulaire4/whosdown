@@ -26,6 +26,7 @@ import HeaderBar from '../../components/HeaderBar'
 import GrowingInput from '../../components/GrowingInput'
 import BinaryButton from '../../components/BinaryButton'
 import RoundButton from '../../components/RoundButton'
+import LocationInput from '../../components/LocationInput'
 
 
 /* ::
@@ -133,6 +134,7 @@ export default class EditEvent extends Component/* :: <Props> */ {
                 value={event.get('description')}
                 onChangeText={(text) => this.onChangeEvent('description', text)}
               />
+              <LocationInput />
               <Text
                 onPress={this.showDatePicker}
               >{moment(event.get('time')).calendar()}</Text>
